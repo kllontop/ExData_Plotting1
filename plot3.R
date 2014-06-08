@@ -4,7 +4,7 @@
 # Downloading data from online location
 web.zip<-"https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip"
 
-tmp<-tempfile(tmpdir="C:/Users/Pep Llontop/Documents/ExData_Plotting1") #creating
+tmp<-tempfile(tmpdir="C:/Users/Llontop/Documents/ExData_Plotting1") #creating
 #a temporary file for the downloaded file to go to
 
 download.file(web.zip,tmp) #downloading the zipped data folder
