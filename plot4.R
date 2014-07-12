@@ -14,81 +14,53 @@ data<-fread(data.file,na.strings="?") #reading the data into R and creating a
 data1<-subset(data,data$Date=="1/2/2007")
 data2<-subset(data,data$Date=="2/2/2007")
 
+#create one vector with all dates and times
+dates_and_times<-paste(as.Date(c(data1[,Date],data2[,Date]),format="%d/%m/%Y"),c(data1[,Time],data2[,Time]),sep=" ")
 
-##Combine the Date and Time Columns of both data subsets
+#convert date/time values to POSIXct format for plotting
+Time<-as.POSIXct(dates_and_times)
 
-#Merge data1 Time and Date
-Date1<-vector(nrow(data1),mode="character") #create an empty character vector
-for(i in 1:length(Date1)){
-        Date1[i]<-"2007-02-01" #replace original date values with a recognizable format
-}
-date.time1<-paste(Date1,data1[,Time],sep=" ")#Creates a vector containing Date and Time
-#in "%Y-%m-%d %H:%M:%s" format
+#Further subsetting the Global Active Power data and coercing the data to the 
+#numeric class for plotting
+global_active_power<-as.numeric(c(data1[,Global_active_power],data2[,Global_active_power]))
 
-#Merge data2 Time and Date (same method as for date.time1)
-Date2<-vector(nrow(data2),mode="character")
-for(i in 1:length(Date2)){
-        Date2[i]<-"2007-02-02"
-}
-date.time2<-paste(Date2,data2[,Time],sep=" ")#Creates a vector containing Date and Time
-#in "%Y-%m-%d %H:%M:%s" format
-
-all.date.time<-c(date.time1,date.time2) #create one vector with all dates and times
-x<-as.POSIXct(all.date.time) #convert date/time values to POSIXct format for plotting
-
-
-##Global Active Power Data
-gap1<-as.numeric(data1[,Global_active_power])
-gap2<-as.numeric(data2[,Global_active_power])
-
-all.gap<-c(gap1,gap2)
-
-##Energy Sub Metering Data
+##Create three separate sub_metering variables, converting "character" class data to 
+##"vector" class for plotting
 #Sub_metering_1 for data1 and data2
-SM1_data1<-as.numeric(data1[,Sub_metering_1])
-SM1_data2<-as.numeric(data2[,Sub_metering_1])
-sub_met_1<-c(SM1_data1,SM1_data2)
+sub_met_1<-as.numeric(c(data1[,Sub_metering_1],data2[,Sub_metering_1]))
 
 #Sub_metering_2 for data1 and data2
-SM2_data1<-as.numeric(data1[,Sub_metering_2])
-SM2_data2<-as.numeric(data2[,Sub_metering_2])
-sub_met_2<-c(SM2_data1,SM2_data2)
+sub_met_2<-as.numeric(c(data1[,Sub_metering_2],data2[,Sub_metering_2]))
 
 #Sub_metering_3 for data1 and data2
-SM3_data1<-as.numeric(data1[,Sub_metering_3])
-SM3_data2<-as.numeric(data2[,Sub_metering_3])
-sub_met_3<-c(SM3_data1,SM3_data2)
+sub_met_3<-as.numeric(c(data1[,Sub_metering_3],data2[,Sub_metering_3]))
 
 ##Voltage Data
-Volt_1<-as.numeric(data1[,Voltage])
-Volt_2<-as.numeric(data2[,Voltage])
-all_Volt<-c(Volt_1,Volt_2)
+Volt<-as.numeric(c(data1[,Voltage],data2[,Voltage]))
 
 ##Global Reactive Power Data
-grp_1<-as.numeric(data1[,Global_reactive_power])
-grp_2<-as.numeric(data2[,Global_reactive_power])
-all_grp<-c(grp_1,grp_2)
+global_reactive_power<-as.numeric(c(data1[,Global_reactive_power],data2[,Global_reactive_power]))
 
 ##Launch png graphics device and plot all four plots
 png("plot4.png",width=480,height=480)
 par(mfcol=c(2,2))
 
 #Plot Global Active Power
-plot(x,all.gap,type="l",xlab=" ",ylab="Global Active Power")
+plot(Time,global_active_power,type="l",xlab=" ",ylab="Global Active Power")
 
 #Plot Sub Metering
-plot(x,sub_met_1,type="n",xlab=" ",ylab="Energy sub metering")
+plot(Time,sub_met_1,type="n",xlab=" ",ylab="Energy sub metering")
 #Add the data to the plot
-lines(x,sub_met_1,col="black")
-lines(x,sub_met_2,col="red")
-lines(x,sub_met_3,col="blue")
+lines(Time,sub_met_1,col="black")
+lines(Time,sub_met_2,col="red")
+lines(Time,sub_met_3,col="blue")
 legend("topright",legend=c("Sub_metering_1","Sub_metering_2","Sub_metering_3"),col=c("black","red","blue"),lty=c(1,1,1),bty="n")
 
 #Plot Voltage
-plot(x,all_Volt,type="l",xlab="datetime",ylab="Voltage")
+plot(Time,Volt,type="l",xlab="datetime",ylab="Voltage")
 
 #Plot Global Reactive Power
-plot(x,all_grp,type="l",xlab="datetime",ylab="Global_reactive_power")
+plot(Time,global_reactive_power,type="l",xlab="datetime",ylab="Global_reactive_power")
 axis(2,at=c(0.1,0.3,0.5),labels=c(0.1,0.3,0.5))
 
 dev.off()
