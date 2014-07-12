@@ -20,15 +20,9 @@ data2<-subset(data,data$Date=="2/2/2007")
 
 #Further subsetting the Global Active Power data and coercing the data to the 
 #numeric class for plotting
-gap1<-data1[,Global_active_power]
-gap1.num<-as.numeric(gap1)
-
-gap2<-data2[,Global_active_power]
-gap2.num<-as.numeric(gap2)
-
-all.gap<-c(gap1.num,gap2.num)
+global_active_power<-as.numeric(c(data1[,Global_active_power],data2[,Global_active_power]))
 
 #Initialize png graphics device and create png file
 png("plot1.png",width=480,height=480)
-hist(all.gap,col="red",main="Global Active Power",xlab="Global Active Power (kilowatts)")
+hist(global_active_power,col="red",main="Global Active Power",xlab="Global Active Power (kilowatts)")
 dev.off()
